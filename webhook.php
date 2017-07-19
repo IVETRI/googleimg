@@ -26,17 +26,7 @@ if (!is_null($text) && !is_null($chat_id)) {
   $telegram->sendMessage(array(
     "chat_id" => $chat_id,
     "text" => $messageToSend,
-    "reply_to_message_id" => $message_id,
-    "reply_markup" => array(
-      "inline_keyboard" => array(
-        array(
-          array(
-              "text" => "Go Inline",
-              "switch_inline_query" => $text
-            )
-        )
-      )
-    )
+    "reply_to_message_id" => $message_id
   ));
 }
 

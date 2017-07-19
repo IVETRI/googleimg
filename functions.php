@@ -102,7 +102,17 @@ function GetimgUrlFromDB($base_url, $search_str, $i = 0){
           array(
               "text" => "Search Again",
               "switch_inline_query_current_chat" => $search_str
-            )
+          )
+        ),
+        array(
+          array(
+              "text" => "GROUP",
+              "url" => "https://t.me/GROUPLINK"
+          ),
+          array(
+            "text" => "CHANNEL",
+            "url" => "https://t.me/CHANNELLINK"
+          )
         )
       )
     );
