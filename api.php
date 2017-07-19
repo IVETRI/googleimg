@@ -44,7 +44,7 @@ else if(startsWith($request, "search")){
   $q = $_REQUEST["q"];
   $returnarray = array();
   header('Content-Type: application/json');
-  $query = "SELECT * FROM $DB_TABLE_NAME WHERE `TAGS` LIKE '%$q%';";
+  $query = "SELECT * FROM $DB_TABLE_NAME WHERE `TAGS` LIKE '%$q%' ORDER BY `ID` DESC LIMIT 0 , 45;";
   $result = $mysqli->query($query);
   if($result->num_rows > 0){
     while($row = $result->fetch_assoc()){

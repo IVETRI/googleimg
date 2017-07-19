@@ -21,10 +21,15 @@
 	$DB_TABLE_NAME = "TUPLENAME";
 
 	$GLOBALS["GOOGLE_CSE_API_CX"] = "";
-	// <=> Get API and CX key from https://developers.google.com/custom-search/
 	$GLOBALS["GOOGLE_CSE_API_KEY"] = "";
 
 	$GLOBALS["TG_BOT_TOKEN"] = "";
+
+	$GLOBALS["TG_ADMIN_IDS"] = array(
+		"",
+		"",
+		""
+	);
 
 	require_once __DIR__ . '/Telegram.php';
 	require_once __DIR__ . '/functions.php';
