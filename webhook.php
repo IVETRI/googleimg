@@ -17,16 +17,25 @@ $username = $data["message"]["from"]["username"];
 
 // Check if the text is a command
 if (!is_null($text) && !is_null($chat_id)) {
-  if($text == "/id"){
+  $messageToSend = $text;
+  if(startsWith($text, "/id")){
     $messageToSend = $chat_id;
   }
-  else {
-    $messageToSend = $text;
-  }
+  $reply_markup = array(
+    "inline_keyboard" => array(
+      array(
+        array(
+            "text" => "Go InLine",
+            "switch_inline_query" => " "
+          )
+      )
+    )
+  );
   $telegram->sendMessage(array(
     "chat_id" => $chat_id,
     "text" => $messageToSend,
-    "reply_to_message_id" => $message_id
+    "reply_to_message_id" => $message_id,
+    "reply_markup" => json_encode($reply_markup)
   ));
 }
 
