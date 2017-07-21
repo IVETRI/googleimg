@@ -1,6 +1,7 @@
 <?php
 	date_default_timezone_set('Asia/Calcutta');
 	setlocale(LC_MONETARY, 'en_IN');
+	header('charset=utf-8');
 
 	if(isset($_REQUEST['d'])){
 		if($_REQUEST['d'] == 1){
