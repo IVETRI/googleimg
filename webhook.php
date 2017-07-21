@@ -53,6 +53,26 @@ if(in_array($chat_id, $GLOBALS["TG_ADMIN_IDS"])){
         "reply_to_message_id" => $message_id
       ));
     }
+    else{
+      $telegram->sendMessage(array(
+        "chat_id" => $chat_id,
+        "text" => "403 F\r\n" . $mysqli->error,
+        "reply_to_message_id" => $message_id
+      ));
+    }
+  }
+  if(startsWith($text, "/stats")){
+    $query = "SELECT COUNT(DISTINCT `UURI`) AS `count` FROM `MemesPlanetBot` WHERE 1;";
+    $result = $mysqli->query($query);
+    if($result->num_rows == 1){
+      $row = $result->fetch_assoc();
+      $count = $row["count"];
+      $telegram->sendMessage(array(
+        "chat_id" => $chat_id,
+        "text" => "DataBase Count: $count",
+        "reply_to_message_id" => $message_id
+      ));
+    }
   }
 }
 

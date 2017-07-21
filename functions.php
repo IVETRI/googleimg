@@ -135,18 +135,18 @@ function GetimgUrlFromDB($base_url, $search_str, $i = 0){
 }
 
 function GetImgUrl($search_str){
-  $DB_URL = "https://spechide-spechide.rhcloud.com/MemesPlanetBot/api.php/search?q=";
+  $DB_URL = "https://path/to/api.php/search?q=";
   $GOOGLE_CSE_API = "https://www.googleapis.com/customsearch/v1?key=" . $GLOBALS["GOOGLE_CSE_API_KEY"] . "&cx=" . $GLOBALS["GOOGLE_CSE_API_CX"];
   $r = array();
   $a = GetimgUrlFromDB($DB_URL, $search_str, 1);
   $c = count($a);
-//  if($c == 0){
-//    $b = GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $c + 1);
+  if($c == 0){
+    $b = GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $c + 1);
     // => https://stackoverflow.com/a/4268954/4723940
-//    $r = array_merge($a, $b);
-//  }
-//  else{
-//    $r = $a;
-//  }
-  return $a;
+    $r = array_merge($a, $b);
+  }
+  else{
+    $r = $a;
+  }
+  return $r;
 }

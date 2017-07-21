@@ -17,3 +17,9 @@
 ```
 https://api.telegram.org/bot<TG_BOT_TOKEN>/setWebhook?url=https://path/to/webhook.php
 ```
+
+- edit the appropriate lines in functions.php
+
+## Contributing
+
+If you find any feature that you would like to have raise an issue or submit a Merge Request for the change.

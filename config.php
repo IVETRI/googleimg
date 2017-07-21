@@ -32,6 +32,8 @@
 		""
 	);
 
+	$GLOBALS["Welcome_MessAge"] = "";
+
 	require_once __DIR__ . '/Telegram.php';
 	require_once __DIR__ . '/functions.php';
 ?>
