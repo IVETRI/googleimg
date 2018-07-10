@@ -1,22 +1,24 @@
 <?php
-require_once __DIR__ . '/config.php';
 
-// Set the bot TOKEN
-$bot_id = $GLOBALS["TG_BOT_TOKEN"];
-// Instances the class
-$telegram = new Telegram($bot_id);
+require_once __DIR__ . "/kyle2142_PHPBot.php";
+require_once __DIR__ . "/functions.php";
+require_once __DIR__ . "/config.php";
 
-// Take text and chat_id from the message
-$text = $telegram->Text();
-$chat_id = $telegram->ChatID();
+$telegram = new kyle2142\PHPBot($TG_BOT_TOKEN);
+$content = file_get_contents('php://input');
+$update = json_decode($content, true);
+// do stuff with $update:
 
+$text = $update['message']['text'];
+$chat_id = $update["message"]["chat"]["id"];
 $callback_query = $telegram->Callback_Query();
-$data = $telegram->getData();
+$data = $update;
 $message_id = $data["message"]["message_id"];
 $username = $data["message"]["from"]["username"];
 
 // Check if the text is a command
-if (!is_null($text) && !is_null($chat_id)) {
+// /start message below
+if(isset($update['message']['text']) and startsWith($update['message']['text'], "/")){
   $messageToSend = $text;
   if(startsWith($text, "/id")){
     $messageToSend = $chat_id;
@@ -31,9 +33,10 @@ if (!is_null($text) && !is_null($chat_id)) {
       )
     )
   );
-  $telegram->sendMessage(array(
-    "chat_id" => $chat_id,
-    "text" => $messageToSend,
+  $telegram->sendMessage(
+    $chat_id,
+    $messageToSend,
+    array(
     "reply_to_message_id" => $message_id,
     "reply_markup" => json_encode($reply_markup)
   ));
@@ -47,29 +50,32 @@ if(in_array($chat_id, $GLOBALS["TG_ADMIN_IDS"])){
     $tag = urlencode(implode("###", $tagS));
     $query = "INSERT INTO $DB_TABLE_NAME(`TAGS`, `UURI`) VALUES ('$tag', '$uuri');";
     if($mysqli->query($query) === TRUE){
-      $telegram->sendMessage(array(
-        "chat_id" => $chat_id,
-        "text" => "200 OK",
+      $telegram->sendMessage(
+        $chat_id,
+        "200 OK",
+        array(
         "reply_to_message_id" => $message_id
       ));
     }
     else{
-      $telegram->sendMessage(array(
-        "chat_id" => $chat_id,
-        "text" => "403 F\r\n" . $mysqli->error,
+      $telegram->sendMessage(
+        $chat_id,
+        "403 F\r\n" . $mysqli->error,
+        array(
         "reply_to_message_id" => $message_id
       ));
     }
   }
   if(startsWith($text, "/stats")){
-    $query = "SELECT COUNT(DISTINCT `UURI`) AS `count` FROM `MemesPlanetBot` WHERE 1;";
+    $query = "SELECT COUNT(DISTINCT `UURI`) AS `count` FROM $DB_TABLE_NAME WHERE 1;";
     $result = $mysqli->query($query);
     if($result->num_rows == 1){
       $row = $result->fetch_assoc();
       $count = $row["count"];
-      $telegram->sendMessage(array(
-        "chat_id" => $chat_id,
-        "text" => "DataBase Count: $count",
+      $telegram->sendMessage(
+        $chat_id,
+        "DataBase Count: $count",
+        array(
         "reply_to_message_id" => $message_id
       ));
     }
@@ -77,14 +83,14 @@ if(in_array($chat_id, $GLOBALS["TG_ADMIN_IDS"])){
 }
 
 // check for inline queries
-if ($data["inline_query"] !== null && $data["inline_query"] != "") {
-    $query = $data["inline_query"]["query"];
+if(isset($update["inline_query"]) and $update["inline_query"] != ""){
+    $query = $update["inline_query"]["query"];
     $results = ObjToJson(GetImgUrl($query));
     $content = array(
-        'inline_query_id' => $data["inline_query"]["id"],
-        'cache_time' => "300",
-        'is_personal' => "False",
+        'inline_query_id' => $update["inline_query"]["id"],
+        'cache_time' => "0",
+        'is_personal' => "True",
         'results' => $results
     );
-    $reply = $telegram->answerInlineQuery($content);
+    $reply = $telegram->api->answerInlineQuery($content);
 }

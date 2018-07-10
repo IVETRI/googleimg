@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/config.php';
 
 function startsWith($haystack, $needle) {
   $length = strlen($needle);
@@ -35,29 +34,42 @@ function JsonToObj($json){
   return json_decode($json, true);
 }
 
-function GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $i = 0){
+function GetimgUrlFromDB($search_str, $i = 0){
   $returnArray = array();
-  $url = $GOOGLE_CSE_API . "&start=" . "1" . "&alt=json&searchType=image&q=" . urlencode($search_str);
-  $response = JsonToObj(fetch_website($url));
-  foreach ($response["items"] as $images){
-    $mime_type = $images["mime"];
-    if($mime_type == "image/jpeg"){
+  $query = "SELECT * FROM $DB_TABLE_NAME WHERE `TAGS` LIKE '%$search_str%' ORDER BY `ID` DESC LIMIT 0 , 45;";
+  $result = $mysqli->query($query);
+  if($result->num_rows > 0){
+    while($row = $result->fetch_assoc()){
+      $a = urldecode($row["TAGS"]);
+      $tagS = explode("###", $a);
+      $uuri = $row["UURI"];
+      $tags = implode(",",$tagS);
       $type = "photo";
       $id = strval($i);
-      $photo_url = $images["link"];
-      $thumb_url = $images["image"]["thumbnailLink"];
-      $photo_width = $images["image"]["width"];
-      $photo_height = $images["image"]["height"];
-      $title = $images["title"];
-      $description = $images["displayLink"];
-      $caption = "";//$images["htmlTitle"];
+      $photo_url = $uuri;
+      $thumb_url = $uuri;
+      // $photo_width = 150;
+      // $photo_height = 150;
+      // $title = $tags;
+      // $description = $tags;
+      // $caption = "";//$images["htmlTitle"];
       $reply_markup = array(
         "inline_keyboard" => array(
           array(
             array(
                 "text" => "Search Again",
                 "switch_inline_query_current_chat" => $search_str
-              )
+            )
+          ),
+          array(
+            array(
+                "text" => "GROUP",
+                "url" => "https://t.me/GROUPLINK"
+            ),
+            array(
+              "text" => "CHANNEL",
+              "url" => "https://t.me/CHANNELLINK"
+            )
           )
         )
       );
@@ -66,11 +78,11 @@ function GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $i = 0){
         "id" => $id,
         "photo_url" => $photo_url,
         "thumb_url" => $thumb_url,
-        "photo_width" => $photo_width,
-        "photo_height" => $photo_height,
-        "title" => $title,
-        "description" => $description,
-        "caption" => $caption,
+        // "photo_width" => $photo_width,
+        // "photo_height" => $photo_height,
+        // "title" => $title,
+        // "description" => $description,
+        // "caption" => $caption,
         "reply_markup" => $reply_markup
       );
       $returnArray[] = $r;
@@ -80,73 +92,7 @@ function GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $i = 0){
   return $returnArray;
 }
 
-function GetimgUrlFromDB($base_url, $search_str, $i = 0){
-  $returnArray = array();
-  $url = $base_url . urlencode($search_str);
-  $response = JsonToObj(fetch_website($url));
-  foreach ($response as $value) {
-    $uuri = $value["UURI"];
-    // $tags = implode(",",$value["TAGS"]);
-    $type = "photo";
-    $id = strval($i);
-    $photo_url = $uuri;
-    $thumb_url = $uuri;
-    // $photo_width = 150;
-    // $photo_height = 150;
-    // $title = $tags;
-    // $description = $tags;
-    // $caption = "";//$images["htmlTitle"];
-    $reply_markup = array(
-      "inline_keyboard" => array(
-        array(
-          array(
-              "text" => "Search Again",
-              "switch_inline_query_current_chat" => $search_str
-          )
-        ),
-        array(
-          array(
-              "text" => "GROUP",
-              "url" => "https://t.me/GROUPLINK"
-          ),
-          array(
-            "text" => "CHANNEL",
-            "url" => "https://t.me/CHANNELLINK"
-          )
-        )
-      )
-    );
-    $r = array(
-      "type" => $type,
-      "id" => $id,
-      "photo_url" => $photo_url,
-      "thumb_url" => $thumb_url,
-      // "photo_width" => $photo_width,
-      // "photo_height" => $photo_height,
-      // "title" => $title,
-      // "description" => $description,
-      // "caption" => $caption,
-      "reply_markup" => $reply_markup
-    );
-    $returnArray[] = $r;
-    $i += 1;
-  }
-  return $returnArray;
-}
-
 function GetImgUrl($search_str){
-  $DB_URL = "https://path/to/api.php/search?q=";
-  $GOOGLE_CSE_API = "https://www.googleapis.com/customsearch/v1?key=" . $GLOBALS["GOOGLE_CSE_API_KEY"] . "&cx=" . $GLOBALS["GOOGLE_CSE_API_CX"];
-  $r = array();
-  $a = GetimgUrlFromDB($DB_URL, $search_str, 1);
-  $c = count($a);
-  if($c == 0){
-    $b = GetImgUrlFromGCS($GOOGLE_CSE_API, $search_str, $c + 1);
-    // => https://stackoverflow.com/a/4268954/4723940
-    $r = array_merge($a, $b);
-  }
-  else{
-    $r = $a;
-  }
-  return $r;
+  $a = GetimgUrlFromDB($search_str, 1);
+  return $a;
 }

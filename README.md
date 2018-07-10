@@ -1,6 +1,6 @@
 ## @SpEcHiDeStickerBOT
 
-# Fork of [TelegramBotPHP](https://github.com/Eleirbag89/TelegramBotPHP)
+# Fork of [KyleTelegramBot](https://github.com/Kyle2142/PHPBot)
 
 ## Requirements
 
@@ -36,10 +36,9 @@ https://api.telegram.org/bot<TG_BOT_TOKEN>/setWebhook?url=https://path/to/webhoo
 - Edit `config.php`, according to your needs.
 
 - Edit the lines in `functions.php`.
-  - Line Number: 110
-  - Line Number: 114
-  - Line Number: 138
-  - Line Number: 143
+  - Line Number: 67
+  - Line Number: 71
+
 
 ## Contributing
 
